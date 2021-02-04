@@ -3,33 +3,32 @@ import {
   CacheInterceptor,
   Controller,
   Get,
+  Post,
   UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 
+@UseInterceptors(CacheInterceptor)
 @Controller()
-export class AppController {
+export class CachedController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
+  @Get('/cached')
   async getHello(): Promise<string> {
     return this.appService.getHello();
   }
 
-  @UseInterceptors(CacheInterceptor)
-  @Get('/cached')
-  async getHelloCached(): Promise<string> {
+  @Post('/cached')
+  async postHelloCached(): Promise<string> {
     return this.appService.getHello();
   }
 
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(60)
+  @CacheTTL(30)
   @Get('/ttl-cached')
   async getHelloTimelyCached(): Promise<string> {
     return this.appService.getHello();
   }
 
-  @UseInterceptors(CacheInterceptor)
   @CacheKey('ABC')
   @Get('/custom-key-cached')
   async getHelloCustomKeyCached(): Promise<string> {
